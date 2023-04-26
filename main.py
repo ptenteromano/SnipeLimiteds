@@ -3,37 +3,61 @@ from threading import Thread
 import os
 import uuid
 import time
-import datetime
 import random
+import ipdb  # debugger
+import datetime
 
-# Evade ratelimits 
+# Evade ratelimits
 import proxylist
 
 with open("limiteds.txt", "r") as f:
     limiteds = f.read().replace(" ", "").split(",")
 
 with open("cookie.txt", "r") as f:
-    cookie = f.read()
+    cookie = f.read().strip()
 
-proxy = proxylist.ips
+# Choose random proxy from list
 
-user_id = r.get("https://users.roblox.com/v1/users/authenticated", cookies={".ROBLOSECURITY": cookie}).json()["id"]
+
+def random_proxy():
+    return {'http': random.choice(proxylist.ips)}
+
+
+# Set up variables and get user id
+proxy = random_proxy()
+
+user_id = r.get(
+    "https://users.roblox.com/v1/users/authenticated",
+    cookies={".ROBLOSECURITY": cookie}
+).json()["id"]
+
 x_token = ""
+
+# x-csrf-token
+
+
 def get_x_token():
     global x_token
 
-    x_token = r.post("https://auth.roblox.com/v2/logout",
-                     cookies={".ROBLOSECURITY": cookie}).headers["x-csrf-token"]
-    print("Sesion iniciada correctamente")
+    x_token = r.post(
+        "https://auth.roblox.com/v2/logout",
+        cookies={".ROBLOSECURITY": cookie}
+    ).headers["x-csrf-token"]
+
+    print("Session started successfully")
 
     while 1:
         # Gets the x_token every 4 minutes.
-        x_token = r.post("https://auth.roblox.com/v2/logout",
-                         cookies={".ROBLOSECURITY": cookie}).headers["x-csrf-token"]
+        x_token = r.post(
+            "https://auth.roblox.com/v2/logout",
+            cookies={".ROBLOSECURITY": cookie}
+        ).headers["x-csrf-token"]
         time.sleep(248)
 
+
+# Purchase limited item
 def buy(json, itemid, productid):
-    print("Iniciando spameo de compra en el limitado...")
+    print("Starting spamming purchase for the limited item...")
 
     data = {
         "collectibleItemId": itemid,
@@ -43,18 +67,22 @@ def buy(json, itemid, productid):
         "expectedPurchaserType": "User",
         "expectedSellerId": json["creatorTargetId"],
         "expectedSellerType": "User",
-        "idempotencyKey": "FurrycalityFetchingService",
+        "idempotencyKey": "ptenteromanoService",
         "collectibleProductId": productid,
         "bypassEnabled": True
     }
 
     while 1:
+        # Post to try to purchase item
         data["idempotencyKey"] = str(uuid.uuid4())
-        bought = r.post(f"https://apis.roblox.com/marketplace-sales/v1/item/{itemid}/purchase-item", json=data,
-            headers={"x-csrf-token": x_token}, cookies={".ROBLOSECURITY": cookie}, proxies=proxy)
+        bought = r.post(
+            f"https://apis.roblox.com/marketplace-sales/v1/item/{itemid}/purchase-item", json=data,
+            headers={"x-csrf-token": x_token}, cookies={".ROBLOSECURITY": cookie}, proxies=proxy
+        )
 
+        # Slow down request
         if bought.reason == "Too Many Requests":
-            print("Ah ocurrido un error en el limite de solicitudes, intentado denuevo en breve...")
+            print("An error has occurred with the request limit, trying again shortly...")
             time.sleep(0.5)
             continue
 
@@ -62,25 +90,38 @@ def buy(json, itemid, productid):
             bought = bought.json()
         except:
             print(bought.reason)
-            print("Error al decodificar el Json durante la compra del item")
+            print("Error decoding the JSON during the purchase of the item.")
             continue
 
         if not bought["purchased"]:
-            print(f"Fallo en comprar el limitado, intenta denuevo - Info: {bought} - {data}")
+            print(
+                f"\nFailed to purchase the limited item, please try again. - Info: {bought} - {data}\n"
+            )
         else:
-            print(f"Se compro correctamente el limitado! - Info: {bought} - {data}")
+            print(
+                f"The limited item was purchased successfully!! - Info: {bought} - {data}"
+            )
 
-        info = r.post("https://catalog.roblox.com/v1/catalog/items/details",
-                      json={"items": [{"itemType": "Asset", "id": int(limited)}]},
-                      headers={"x-csrf-token": x_token}, cookies={".ROBLOSECURITY": cookie}, proxies=proxy)
+        # Try to get the stock of the item (remaining units)
+        info = r.post(
+            "https://catalog.roblox.com/v1/catalog/items/details",
+            json={
+                "items": [{"itemType": "Asset", "id": int(limited)}]
+            },
+            headers={"x-csrf-token": x_token}, cookies={".ROBLOSECURITY": cookie}, proxies=proxy
+        )
+
         try:
             left = info.json()["data"][0]["unitsAvailableForConsumption"]
         except:
-            print(f"Fallo en obtener el stock - Full log: {info.text} - {info.reason}")
+            print(
+                f"Failed to obtain the stock. - Full log: {info.text} - {info.reason}")
             left = 0
 
         if left == 0:
-            print("No se pudo comprar el limitado, mejor suerte la proxima")
+            print(
+                "The limited item could not be purchased - stock depleted, better luck next time!"
+            )
             return
 
 
@@ -94,49 +135,59 @@ print("""██╗░░░██╗░██████╗░░████�
 ╚██████╔╝╚██████╔╝╚█████╔╝██║░░██║░░░██║░░░╚█████╔╝██║░░██║███████╗██║░░██║
 ░╚═════╝░░╚═════╝░░╚════╝░╚═╝░░╚═╝░░░╚═╝░░░░╚════╝░╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝
 █░░ █▀▀ █▀▀ ▄▀█ █▀▀ █▄█
-█▄▄ ██▄ █▄█ █▀█ █▄▄ ░█░ 
+█▄▄ ██▄ █▄█ █▀█ █▄▄ ░█░
 
-Created by Furrycality™#1234 | Soporte: https://discord.gg/WDbrnWpjpd \n\n""")
+www.tenteromano.com\n\n""")
 # os.system("pip install -update git+https://github.com/Furrycality/UGCatcher.git#egg=UGCatcher")
 # os.system("start \"\" https://discord.gg/WDbrnWpjpd")
 
-
+# Wait for the Token to be generated by the thread
 while x_token == "":
     time.sleep(0.01)
 
 # https://apis.roblox.com/marketplace-items/v1/items/details
 # https://catalog.roblox.com/v1/catalog/items/details
 
-
+# Run the program for all of the limiteds in the list
 cooldown = 60/(39/len(limiteds))-0.8
 while 1:
-    for x in limiteds: 
-        print("\nLimitado con ID " + x)
+    for x in limiteds:
+        print("\nLimited item with ID: " + x)
     start = time.perf_counter()
     print("\n")
 
+    # Get the collectible and product id for all the limiteds
     for limited in limiteds:
         try:
-            info = r.post("https://catalog.roblox.com/v1/catalog/items/details",
-                           json={"items": [{"itemType": "Asset", "id": int(limited)}]},
-                           headers={"x-csrf-token": x_token}, cookies={".ROBLOSECURITY": cookie}, proxies=proxy).json()["data"][0]
+            info = r.post(
+                "https://catalog.roblox.com/v1/catalog/items/details",
+                json={
+                    "items": [{"itemType": "Asset", "id": int(limited)}]
+                },
+                headers={"x-csrf-token": x_token}, cookies={".ROBLOSECURITY": cookie}, proxies=proxy
+            ).json()["data"][0]
+
         except KeyError:
-            print("Ratelimited! Cambiando servidor proxy...")
-            proxy = proxylist.ips
-            #time.sleep(3-int(datetime.datetime.now().second))
+            print("Ratelimited! Changing proxy server...")
+            proxy = random_proxy()
+            # time.sleep(3-int(datetime.datetime.now().second))
             continue
 
         if info.get("priceStatus", "") != "Off Sale" and info.get("collectibleItemId") is not None:
-            productid = r.post("https://apis.roblox.com/marketplace-items/v1/items/details",
-                   json={"itemIds": [info["collectibleItemId"]]},
-                   headers={"x-csrf-token": x_token}, cookies={".ROBLOSECURITY": cookie}, proxies=proxy)
+            productid = r.post(
+                "https://apis.roblox.com/marketplace-items/v1/items/details",
+                json={"itemIds": [info["collectibleItemId"]]},
+                headers={"x-csrf-token": x_token}, cookies={".ROBLOSECURITY": cookie}, proxies=proxy
+            )
 
             try:
                 productid = productid.json()[0]["collectibleProductId"]
             except:
-                print(f"Algo ha salido mal obteniendo el id del articulo - Logs - {productid.text} - {productid.reason}")
+                print(
+                    f"Something went wrong while fetching the item id. Logs: {productid.text} - {productid.reason}")
                 continue
 
+            # Attempt to buy a limited
             buy(info, info["collectibleItemId"], productid)
 
     taken = time.perf_counter()-start
@@ -144,16 +195,17 @@ while 1:
         time.sleep(cooldown-taken)
 
     os.system("cls")
-    print("""██╗░░░██╗░██████╗░░█████╗░░█████╗░████████╗░█████╗░██╗░░██╗███████╗██████╗░
+    print("""
+██╗░░░██╗░██████╗░░█████╗░░█████╗░████████╗░█████╗░██╗░░██╗███████╗██████╗░
 ██║░░░██║██╔════╝░██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗██║░░██║██╔════╝██╔══██╗
 ██║░░░██║██║░░██╗░██║░░╚═╝███████║░░░██║░░░██║░░╚═╝███████║█████╗░░██████╔╝
 ██║░░░██║██║░░╚██╗██║░░██╗██╔══██║░░░██║░░░██║░░██╗██╔══██║██╔══╝░░██╔══██╗
 ╚██████╔╝╚██████╔╝╚█████╔╝██║░░██║░░░██║░░░╚█████╔╝██║░░██║███████╗██║░░██║
 ░╚═════╝░░╚═════╝░░╚════╝░╚═╝░░╚═╝░░░╚═╝░░░░╚════╝░╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝
 █░░ █▀▀ █▀▀ ▄▀█ █▀▀ █▄█
-█▄▄ ██▄ █▄█ █▀█ █▄▄ ░█░ 
+█▄▄ ██▄ █▄█ █▀█ █▄▄ ░█░
 
 Created by Furrycality™#1234 | Soporte: https://discord.gg/WDbrnWpjpd \n\n"""
-"Verificando limited...\n"
-          f"Tiempo tomado: {round(time.perf_counter()-start, 3)}\n"
-          f"Tiempo sin delay: {round(cooldown, 3)}")
+          "Verifying limited item...\n"
+          f"Time taken: {round(time.perf_counter()-start, 3)}\n"
+          f"Time without delay: {round(cooldown, 3)}")
