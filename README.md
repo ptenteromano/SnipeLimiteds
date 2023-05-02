@@ -1,35 +1,32 @@
-A script to get UGC items for free quickly
+## A script to get UGC items for free quickly
 
-Support: https://discord.gg/WDbrnWpjpd
-
-More detailed instructions there as well as a guide to run on android (Thanks to Mairon for the help)
 Features
-Get free limiteds
-Searches 24/7 to see if it's for sale
-Easy to use
-Lightweight
-Retries purchase when it fails
-Integrated Anti-Crash
-Speed in milliseconds
-ANDROID SUPPORT
-Installation
-Step 1 - Install Python and libraries
-First, you need to install Python, which you can do here.
+- Get free limiteds
+- Searches 24/7 to see if it's for sale
+- Easy to use
+- Lightweight
+- Retries purchase when it fails
+- Integrated Anti-Crash
+- Speed in milliseconds
+
+## Installation
+**Step 1** - Install Python and libraries
+First, you need to install Python3, you should be able to run python from the command line.
 
 After downloading Python, you need to install the requests library.
 
 Open CMD and type this command:
 
-pip install requests
+`pip install requests`
 If it fails, try this command:
 
-python -m pip install requests
-Step 2 - Download the script
+`python -m pip install requests`
+**Step 2** - Download the script
 Click on "Code" > "Download ZIP" or go to the latest Release.
 
 This will download the script as a .zip file, extract all the files in the folder of your choice.
 
-Step 3 - Access
+**Step 3** - Access
 You need to put your Roblox cookie in the cookie.txt file.
 
 This is to be able to log in to your account to make purchases.
@@ -44,17 +41,12 @@ Then open a tab in Roblox and click on the extension, then click on the .ROBLOSE
 
 This is the .ROBLOSECURITY, don't share it with anyone.
 
-And that's it!
-
-Step 4 - Get the limiteds
+**Step 4** - Get the limiteds
 Enter the IDs of the free limiteds you want to get in the limiteds.txt file separated by commas, like this:
 
 12345,67890,82141
 
-Step 5 - Start
-Run the main.py file and that's it, just be patient while the bot does all its work UwU
+**Step 5** - Start
+Run the main.py file with `python main.py` and that's it, just be patient while the bot does all its work UwU
 
 Support me by giving this project a star UwU
-
-----
-13256814886
