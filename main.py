@@ -16,11 +16,13 @@ with open("limiteds.txt", "r") as f:
 with open("cookie.txt", "r") as f:
     cookie = f.read().strip()
 
-# Choose random proxy from list
-
 
 def random_proxy():
     return {'http': random.choice(proxylist.ips)}
+
+
+def get_product_id(info):
+    return info.get("collectibleItemId")
 
 
 # Set up variables and get user id
@@ -32,8 +34,6 @@ user_id = r.get(
 ).json()["id"]
 
 x_token = ""
-
-# x-csrf-token
 
 
 def get_x_token():
@@ -83,7 +83,7 @@ def buy(json, itemid, productid):
         # Slow down request
         if bought.reason == "Too Many Requests":
             print("An error has occurred with the request limit, trying again shortly...")
-            time.sleep(0.5)
+            time.sleep(0.8)  # Be careful - might have to increase this
             continue
 
         try:
@@ -159,53 +159,64 @@ while 1:
     # Get the collectible and product id for all the limiteds
     for limited in limiteds:
         try:
-            info = r.post(
+            print(f"Getting info for item: {limited}")
+            pre_info = r.post(
                 "https://catalog.roblox.com/v1/catalog/items/details",
                 json={
                     "items": [{"itemType": "Asset", "id": int(limited)}]
                 },
                 headers={"x-csrf-token": x_token}, cookies={".ROBLOSECURITY": cookie}, proxies=proxy
-            ).json()["data"][0]
+            ).json()
+
+            info = pre_info["data"][0]
 
         except KeyError:
-            print("Ratelimited! Changing proxy server...")
+            print(f"Ratelimited! Changing proxy server..., {pre_info}")
             proxy = random_proxy()
-            # time.sleep(3-int(datetime.datetime.now().second))
+            time.sleep(5)
             continue
 
-        if info.get("priceStatus", "") != "Off Sale" and info.get("collectibleItemId") is not None:
+        print(f"Fetching info for item named: {info['name']}")
+        item_id = get_product_id(info)
+
+        if info.get("priceStatus", "") != "Off Sale" and item_id is not None:
+            print("Item for sale, attempting to get product id")
             productid = r.post(
                 "https://apis.roblox.com/marketplace-items/v1/items/details",
-                json={"itemIds": [info["collectibleItemId"]]},
+                json={"itemIds": [item_id]},
                 headers={"x-csrf-token": x_token}, cookies={".ROBLOSECURITY": cookie}, proxies=proxy
             )
-
             try:
                 productid = productid.json()[0]["collectibleProductId"]
             except:
                 print(
-                    f"Something went wrong while fetching the item id. Logs: {productid.text} - {productid.reason}")
+                    f"Something went wrong while fetching the item id. Logs: {productid.text} - {productid.reason}"
+                )
                 continue
 
             # Attempt to buy a limited
+            print("Attempting to purchase item")
             buy(info, info["collectibleItemId"], productid)
+        else:
+            print("Item not for sale, trying again after cooldown...\n")
 
+    # Deduct runtime from cooldown. Sleep
     taken = time.perf_counter()-start
     if taken < cooldown:
         time.sleep(cooldown-taken)
 
-    os.system("cls")
-    print("""
-██╗░░░██╗░██████╗░░█████╗░░█████╗░████████╗░█████╗░██╗░░██╗███████╗██████╗░
-██║░░░██║██╔════╝░██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗██║░░██║██╔════╝██╔══██╗
-██║░░░██║██║░░██╗░██║░░╚═╝███████║░░░██║░░░██║░░╚═╝███████║█████╗░░██████╔╝
-██║░░░██║██║░░╚██╗██║░░██╗██╔══██║░░░██║░░░██║░░██╗██╔══██║██╔══╝░░██╔══██╗
-╚██████╔╝╚██████╔╝╚█████╔╝██║░░██║░░░██║░░░╚█████╔╝██║░░██║███████╗██║░░██║
-░╚═════╝░░╚═════╝░░╚════╝░╚═╝░░╚═╝░░░╚═╝░░░░╚════╝░╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝
-█░░ █▀▀ █▀▀ ▄▀█ █▀▀ █▄█
-█▄▄ ██▄ █▄█ █▀█ █▄▄ ░█░
+    os.system("clear")
+#     print("""
+# ██╗░░░██╗░██████╗░░█████╗░░█████╗░████████╗░█████╗░██╗░░██╗███████╗██████╗░
+# ██║░░░██║██╔════╝░██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗██║░░██║██╔════╝██╔══██╗
+# ██║░░░██║██║░░██╗░██║░░╚═╝███████║░░░██║░░░██║░░╚═╝███████║█████╗░░██████╔╝
+# ██║░░░██║██║░░╚██╗██║░░██╗██╔══██║░░░██║░░░██║░░██╗██╔══██║██╔══╝░░██╔══██╗
+# ╚██████╔╝╚██████╔╝╚█████╔╝██║░░██║░░░██║░░░╚█████╔╝██║░░██║███████╗██║░░██║
+# ░╚═════╝░░╚═════╝░░╚════╝░╚═╝░░╚═╝░░░╚═╝░░░░╚════╝░╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝
+# █░░ █▀▀ █▀▀ ▄▀█ █▀▀ █▄█
+# █▄▄ ██▄ █▄█ █▀█ █▄▄ ░█░
 
-Created by Furrycality™#1234 | Soporte: https://discord.gg/WDbrnWpjpd \n\n"""
-          "Verifying limited item...\n"
-          f"Time taken: {round(time.perf_counter()-start, 3)}\n"
+# www.tenteromano.com \n\n"""
+#           "Verifying limited item...\n"
+    print(f"Time taken: {round(time.perf_counter()-start, 3)}\n"
           f"Time without delay: {round(cooldown, 3)}")
