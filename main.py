@@ -8,7 +8,6 @@ try:
     import random
     import time
     import requests as r
-    import ipdb
     from colorama import Fore, Style
     from rgbprint import Color
     import aiohttp
