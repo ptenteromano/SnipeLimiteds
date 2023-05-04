@@ -17,7 +17,7 @@ try:
 
 except ModuleNotFoundError:
     import os
-    print("Faltan algunas librerias, instalandolas ahora...")
+    print("Missing some libraries, installing them now...")
     os.system("pip install requests")
     os.system("pip install colorama")
     os.system("pip install aiohttp")
@@ -25,7 +25,7 @@ except ModuleNotFoundError:
    # os.system("pip install free-proxy")
     os.system("pip install rgbprint")
 
-    print("Se instalaron todas las librerias, ya puedes iniciar")
+    print("All libraries were installed, you can now start.")
     os.system("pause")
     exit(1)
 
@@ -232,7 +232,7 @@ class UGCatcher():
               f" 🙍 User       : {Color(0x3f88c5)}{Style.BRIGHT}{self.userID} / {self.username} ({self.userDisplayName}){Fore.WHITE}")
         print("  -----------")
         print(Style.BRIGHT +
-              f" 🛒 Shop       : {Color(0x5c95ff)}{Style.BRIGHT}{self.buys}{Fore.WHITE}")
+              f" 🛒 Purchased       : {Color(0x5c95ff)}{Style.BRIGHT}{self.buys}{Fore.WHITE}")
         print(Style.BRIGHT +
               f" ⚠️ Errors       : {Color(0xd90429)}{Style.BRIGHT}{self.errors}{Fore.WHITE}")
         print(Style.BRIGHT +
@@ -485,7 +485,7 @@ class UGCatcher():
                     self.last_time = round(t1 - t0, 3)
 
             except r.exceptions.RequestException as e:
-                print(f'Connection error: {e}')
+                print(f'Connection error: {e} with item: {currentItem}')
                 self.errors += 1
             except aiohttp.ContentTypeError as e:
                 print(f'Content type error: {e}')
@@ -567,7 +567,7 @@ class LoadingBar():
         self.colors = ['\033[31m', '\033[33m', '\033[32m',
                        '\033[36m', '\033[34m', '\033[35m']
         self.loadBar = 50
-        self.animSpeed = 0.1
+        self.animSpeed = 0.05
 
         for i in range(self.loadBar + 1):
             if i == self.loadBar:
@@ -578,7 +578,7 @@ class LoadingBar():
                     self.loadBar - i) + f' | {self.percent}%\033[0m', end='')
                 print("\nUGCatcher loaded successfully!\n\n")
 
-                time.sleep(5)
+                time.sleep(2)
 
                 menu = Menu()
                 menu.mainMenu()
