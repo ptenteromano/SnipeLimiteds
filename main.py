@@ -206,8 +206,11 @@ class UGCatcher():
     def _getUserData(self, cookie) -> dict:
         response = r.get("https://users.roblox.com/v1/users/authenticated",
                          cookies={".ROBLOSECURITY": cookie}, verify=True)
-        data = response.json()
-        return {"name": data.get('name'), "displayName": data.get('displayName'), "id": data.get('id')}
+        try:
+            data = response.json()
+            return {"name": data.get('name'), "displayName": data.get('displayName'), "id": data.get('id')}
+        except:
+            raise Exception("Problem getting user data", data)
 
     def _addValues(self):
         if self.accounts is not None:
