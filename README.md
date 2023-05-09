@@ -10,41 +10,55 @@ Features
 - Speed in milliseconds
 
 ## Installation
-**Step 1** - Install Python and libraries
-First, you need to install Python3, you should be able to run python from the command line.
 
-After downloading Python, you need to install the requests library.
+### Step 1
+**Download the script**
 
-Open CMD and type this command:
-
-`pip install requests`
-If it fails, try this command:
-
-`python -m pip install requests`
-**Step 2** - Download the script
+Go to https://github.com/ptenteromano/SnipeLimiteds
 Click on "Code" > "Download ZIP" or go to the latest Release.
 
 This will download the script as a .zip file, extract all the files in the folder of your choice.
+Make sure you know where the folder is!
 
-**Step 3** - Access
-You need to put your Roblox cookie in the cookie.txt file.
+<hr>
+
+### Step 2
+**Access your Roblox Account**
+
+We will put your Roblox cookie in the `cookies.txt` file, it should be the only thing in this file.
 
 This is to be able to log in to your account to make purchases.
 
-Install the Cookie-Editor extension:
+Install the Cookie-Editor extension for your browser:
 
-Chrome: https://chrome.google.com/webstore/detail/cookie-editor/hlkenndednhfkekhgcdicdfddnkalmdm
+For [Chrome](https://chrome.google.com/webstore/detail/cookie-editor/hlkenndednhfkekhgcdicdfddnkalmdm)
 
-Edge: https://microsoftedge.microsoft.com/addons/detail/cookieeditor/neaplmfkghagebokkhpjpoebhdledlfi
+For [Edge](https://microsoftedge.microsoft.com/addons/detail/cookieeditor/neaplmfkghagebokkhpjpoebhdledlfi)
 
-Then open a tab in Roblox and click on the extension, then click on the .ROBLOSECURITY tab and copy everything that is inside the Value box. Now open cookie.txt and paste it there.
+Then open a tab in Roblox and click on the extension, then click on the `.ROBLOSECURITY` tab and copy **everything** that is inside the Value box. Now open `cookies.txt` and paste it there.
 
-This is the .ROBLOSECURITY, don't share it with anyone.
+This is the `.ROBLOSECURITY`, don't share it with anyone!!
 
-**Step 4** - Get the limiteds
-Enter the IDs of the free limiteds you want to get in the limiteds.txt file separated by commas, like this:
+<hr>
 
-12345,67890,82141
+### Step 3
+**Run the Bot**
 
-**Step 5** - Start
-Run the main.py file with `python main.py` and that's it, just be patient while the bot does all its work UwU
+Install Python3, you should be able to run python from the command line.
+Your best bet is to google this and find the correct steps for your operating system.
+
+After installing, open `PowerShell` for Windows (or `Terminal` if on a Mac).
+Move to the directory where the repository is using the `cd` command.
+
+Then run `python main.py`, it will install the libraries for you. When that's done, move on to step 2.
+
+Note: You may have to run with `python3` or `python.exe` instead of just `python`
+
+<hr>
+
+### Optional
+**Add specific limiteds**
+
+You can optionally add in limiteds ID that are currently, or will be going on sale soon. In the `limiteds.txt` file, add the IDs separated by commas, like this: `12345,67890,82141`
+
+This is optional, the bot should be able to search for currently on-sale limiteds. If no limiteds on sale, it will continue to search.
