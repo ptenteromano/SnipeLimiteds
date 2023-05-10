@@ -25,7 +25,7 @@ Make sure you know where the folder is!
 ### Step 2
 **Access your Roblox Account**
 
-We will put your Roblox cookie in the `cookies.txt` file, it should be the only thing in this file.
+We will put your Roblox cookie in the `cookies.txt` file (this file is in the `data/` folder), it should be the only thing in this file.
 
 This is to be able to log in to your account to make purchases.
 
@@ -35,7 +35,7 @@ For [Chrome](https://chrome.google.com/webstore/detail/cookie-editor/hlkenndednh
 
 For [Edge](https://microsoftedge.microsoft.com/addons/detail/cookieeditor/neaplmfkghagebokkhpjpoebhdledlfi)
 
-Then open a tab in Roblox and click on the extension, then click on the `.ROBLOSECURITY` tab and copy **everything** that is inside the Value box. Now open `cookies.txt` and paste it there.
+Then open a tab in Roblox and click on the extension, then click on the `.ROBLOSECURITY` tab and copy **everything** that is inside the Value box. Now open `data/cookies.txt` and paste it there.
 
 This is the `.ROBLOSECURITY`, don't share it with anyone!!
 
@@ -50,9 +50,11 @@ Your best bet is to google this and find the correct steps for your operating sy
 After installing, open `PowerShell` for Windows (or `Terminal` if on a Mac).
 Move to the directory where the repository is using the `cd` command.
 
-Then run `python main.py`, it will install the libraries for you. When that's done, move on to step 2.
+For example, if the "SnipeLimiteds" folder is in your Downloads, you would type: `cd Downloads/SnipeLimiteds-Main`
+Then run `python main.py`, it will install the libraries for you.
+When that's done, you need to run it again in the same way: `python main.py`.
 
-Note: You may have to run with `python3` or `python.exe` instead of just `python`
+**Note**: You may have to run with `python3` or `python.exe` instead of just `python`
 
 <hr>
 
